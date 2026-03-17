@@ -348,3 +348,7 @@ Este projeto evidenciou que aprender cibersegurança com IA exige **disciplina d
 ---
 
 *Projeto desenvolvido como parte do desafio prático da [DIO — Digital Innovation One](https://www.dio.me)*
+
+
+![DarthVaderStarWarsGIF](https://github.com/user-attachments/assets/1e9ffe4c-a409-436f-b477-84d243475ed2)
+
