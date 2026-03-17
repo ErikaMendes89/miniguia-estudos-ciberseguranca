@@ -1,0 +1,1490 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Miniguia de Cibersegurança — Caderno DIO</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:      #080c0f;
+  --bg2:     #0d1318;
+  --bg3:     #111820;
+  --bg4:     #162030;
+  --green:   #00ff88;
+  --green2:  #00cc6a;
+  --green3:  #007a40;
+  --green4:  #003d20;
+  --cyan:    #00d4ff;
+  --red:     #ff3860;
+  --amber:   #ffb300;
+  --muted:   #4a7060;
+  --text:    #b0d4c0;
+  --text2:   #6a9a7a;
+  --border:  #1a3028;
+  --border2: #234035;
+  --mono: 'IBM Plex Mono', 'Share Tech Mono', monospace;
+  --display: 'Rajdhani', sans-serif;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 14px;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+
+/* ── SCANLINE OVERLAY ── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,255,136,0.015) 2px,
+    rgba(0,255,136,0.015) 4px
+  );
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* ── HERO ── */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 80px 60px;
+  position: relative;
+  border-bottom: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 50% at 80% 50%, rgba(0,255,136,0.04) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 60% at 20% 80%, rgba(0,212,255,0.03) 0%, transparent 60%);
+}
+
+/* animated grid background */
+.hero-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(var(--border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size: 48px 48px;
+  opacity: 0.5;
+  mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 20%, transparent 80%);
+}
+
+.hero-status {
+  font-size: 11px;
+  color: var(--green);
+  letter-spacing: 0.2em;
+  margin-bottom: 32px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.blink {
+  display: inline-block;
+  width: 8px; height: 8px;
+  background: var(--green);
+  border-radius: 50%;
+  animation: blink 1.2s step-end infinite;
+}
+
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+.hero h1 {
+  font-family: var(--display);
+  font-size: clamp(40px, 7vw, 90px);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  color: #fff;
+  margin-bottom: 8px;
+}
+
+.hero h1 .accent { color: var(--green); text-shadow: 0 0 40px rgba(0,255,136,0.4); }
+
+.hero-sub-title {
+  font-family: var(--display);
+  font-size: clamp(20px, 3vw, 36px);
+  font-weight: 500;
+  color: var(--cyan);
+  letter-spacing: 0.05em;
+  margin-bottom: 32px;
+  opacity: 0.8;
+}
+
+.hero-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 40px;
+}
+
+.meta-tag {
+  font-size: 11px;
+  padding: 4px 12px;
+  border: 1px solid var(--border2);
+  border-radius: 2px;
+  color: var(--text2);
+  letter-spacing: 0.1em;
+  background: var(--bg2);
+}
+
+.meta-tag.highlight { border-color: var(--green3); color: var(--green); }
+
+/* ── NAV ── */
+nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(8,12,15,0.95);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  overflow-x: auto;
+  padding: 0 40px;
+}
+
+nav a {
+  font-family: var(--display);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: var(--text2);
+  text-decoration: none;
+  padding: 14px 18px;
+  border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  transition: color 0.2s, border-color 0.2s;
+  text-transform: uppercase;
+}
+
+nav a:hover { color: var(--text); border-color: var(--border2); }
+nav a.active { color: var(--green); border-color: var(--green); }
+
+/* ── LAYOUT ── */
+.container { max-width: 960px; margin: 0 auto; padding: 64px 40px; }
+section { margin-bottom: 80px; }
+
+/* ── SECTION HEADER ── */
+.section-head {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 36px;
+}
+
+.section-num {
+  font-size: 11px;
+  color: var(--green);
+  letter-spacing: 0.2em;
+  white-space: nowrap;
+}
+
+.section-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, var(--border2), transparent);
+}
+
+h2 {
+  font-family: var(--display);
+  font-size: 28px;
+  font-weight: 700;
+  color: #e0f0e8;
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+}
+
+.section-desc { color: var(--text2); font-size: 13px; margin-bottom: 32px; }
+
+/* ── TERMINAL BLOCK ── */
+.terminal {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.terminal-bar {
+  background: var(--bg3);
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+.dot { width:10px; height:10px; border-radius:50%; }
+.dot-r { background: #ff3860; }
+.dot-y { background: #ffb300; }
+.dot-g { background: #00ff88; }
+
+.terminal-title {
+  font-size: 11px;
+  color: var(--text2);
+  letter-spacing: 0.1em;
+  flex: 1;
+  text-align: center;
+}
+
+.terminal-body {
+  padding: 20px 24px;
+  font-size: 12.5px;
+  color: var(--text);
+  line-height: 1.75;
+  white-space: pre-wrap;
+}
+
+.terminal-body .prompt { color: var(--green); }
+.terminal-body .cmd    { color: #fff; }
+.terminal-body .out    { color: var(--text2); }
+.terminal-body .err    { color: var(--red); }
+.terminal-body .ok     { color: var(--green); }
+
+/* ── PROMPT CARDS ── */
+.prompt-pair { margin-bottom: 40px; }
+
+.prompt-version {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.badge {
+  font-family: var(--display);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  padding: 3px 10px;
+  border-radius: 2px;
+}
+
+.badge-fail { background: rgba(255,56,96,0.15); color: var(--red); border: 1px solid rgba(255,56,96,0.3); }
+.badge-ok   { background: rgba(0,255,136,0.1);  color: var(--green); border: 1px solid rgba(0,255,136,0.25); }
+
+.prompt-code {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-left: 3px solid;
+  padding: 16px 20px;
+  font-size: 12.5px;
+  color: var(--text);
+  white-space: pre-wrap;
+  border-radius: 2px;
+  margin-bottom: 10px;
+}
+
+.prompt-code.fail { border-left-color: var(--red); }
+.prompt-code.ok   { border-left-color: var(--green); }
+
+.prompt-result {
+  font-size: 12px;
+  color: var(--text2);
+  padding: 10px 16px;
+  background: var(--bg3);
+  border-radius: 2px;
+  margin-bottom: 6px;
+}
+
+.learning {
+  font-size: 12px;
+  color: var(--cyan);
+  padding: 8px 16px;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.learning::before { content: '⟹'; color: var(--cyan); }
+
+/* ── TABLES ── */
+.table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  margin-bottom: 24px;
+}
+
+table { width: 100%; border-collapse: collapse; min-width: 500px; }
+
+thead tr { background: var(--bg3); border-bottom: 1px solid var(--border2); }
+
+th {
+  font-family: var(--display);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--green);
+  padding: 10px 14px;
+  text-align: left;
+  white-space: nowrap;
+}
+
+td { padding: 10px 14px; border-bottom: 1px solid var(--border); color: var(--text); font-size: 12.5px; vertical-align: top; }
+tr:last-child td { border-bottom: none; }
+tbody tr:hover td { background: rgba(0,255,136,0.03); }
+
+td code {
+  font-family: var(--mono);
+  font-size: 11px;
+  background: var(--bg3);
+  padding: 1px 5px;
+  border-radius: 2px;
+  color: var(--cyan);
+  border: 1px solid var(--border);
+}
+
+/* ── CARD GRID ── */
+.card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-bottom: 32px; }
+
+.card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+}
+
+.card.green::before  { background: var(--green); }
+.card.cyan::before   { background: var(--cyan); }
+.card.red::before    { background: var(--red); }
+.card.amber::before  { background: var(--amber); }
+
+.card-label {
+  font-family: var(--display);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.card.green .card-label  { color: var(--green); }
+.card.cyan .card-label   { color: var(--cyan); }
+.card.red .card-label    { color: var(--red); }
+.card.amber .card-label  { color: var(--amber); }
+
+.card h3 {
+  font-family: var(--display);
+  font-size: 16px;
+  font-weight: 700;
+  color: #e0f0e8;
+  margin-bottom: 10px;
+}
+
+.card p { font-size: 12.5px; color: var(--text2); line-height: 1.65; }
+
+.card ul { list-style: none; margin-top: 10px; }
+.card ul li {
+  font-size: 12px;
+  color: var(--text2);
+  padding: 3px 0;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.card ul li::before { content: '>'; color: var(--green); font-size: 10px; }
+
+/* ── PILLARS ── */
+.pillars { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 32px; }
+
+@media (max-width: 640px) { .pillars { grid-template-columns: 1fr; } }
+
+.pillar {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-top: 2px solid;
+  padding: 20px;
+  border-radius: 4px;
+}
+
+.pillar.c { border-top-color: var(--green); }
+.pillar.i { border-top-color: var(--cyan); }
+.pillar.a { border-top-color: var(--amber); }
+
+.pillar-letter {
+  font-family: var(--display);
+  font-size: 48px;
+  font-weight: 700;
+  line-height: 1;
+  margin-bottom: 8px;
+  opacity: 0.15;
+}
+
+.pillar.c .pillar-letter { color: var(--green); }
+.pillar.i .pillar-letter { color: var(--cyan); }
+.pillar.a .pillar-letter { color: var(--amber); }
+
+.pillar-name {
+  font-family: var(--display);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.pillar.c .pillar-name { color: var(--green); }
+.pillar.i .pillar-name { color: var(--cyan); }
+.pillar.a .pillar-name { color: var(--amber); }
+
+.pillar-def { font-size: 12px; color: var(--text2); margin-bottom: 12px; }
+
+.pillar-threats, .pillar-controls {
+  font-size: 11px;
+  margin-bottom: 4px;
+}
+
+.pillar-threats { color: var(--red); }
+.pillar-controls { color: var(--text2); }
+
+/* ── GLOSSARY ── */
+.glos-item {
+  display: grid;
+  grid-template-columns: 160px 1fr;
+  gap: 16px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+  align-items: start;
+}
+
+@media (max-width: 600px) { .glos-item { grid-template-columns: 1fr; } }
+
+.glos-term {
+  font-family: var(--display);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--green);
+  letter-spacing: 0.05em;
+}
+
+.glos-def { font-size: 12.5px; color: var(--text2); }
+.glos-src {
+  font-size: 10px;
+  color: var(--muted);
+  margin-top: 3px;
+  letter-spacing: 0.08em;
+}
+
+/* ── REUSABLE PROMPTS ── */
+.reuse {
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+
+.reuse-head {
+  background: var(--bg3);
+  padding: 10px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+}
+
+.reuse-label {
+  font-family: var(--display);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--cyan);
+  letter-spacing: 0.08em;
+}
+
+.copy-btn {
+  font-family: var(--mono);
+  font-size: 10px;
+  padding: 4px 12px;
+  background: transparent;
+  border: 1px solid var(--border2);
+  border-radius: 2px;
+  color: var(--text2);
+  cursor: pointer;
+  letter-spacing: 0.1em;
+  transition: all 0.15s;
+}
+
+.copy-btn:hover { background: var(--green4); border-color: var(--green3); color: var(--green); }
+
+.reuse-body {
+  padding: 16px 18px;
+  font-size: 12px;
+  color: var(--text2);
+  white-space: pre-wrap;
+  line-height: 1.75;
+}
+
+/* ── NIST FLOW ── */
+.nist-flow {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  overflow-x: auto;
+  padding: 4px 0 16px;
+  margin-bottom: 24px;
+}
+
+.nist-block {
+  flex: 1;
+  min-width: 120px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  padding: 16px 12px;
+  position: relative;
+  text-align: center;
+}
+
+.nist-block:not(:last-child)::after {
+  content: '→';
+  position: absolute;
+  right: -14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--green3);
+  font-size: 16px;
+  z-index: 1;
+}
+
+.nist-block:not(:first-child) { border-left: none; }
+
+.nist-fn {
+  font-family: var(--display);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--green);
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+}
+
+.nist-desc { font-size: 10px; color: var(--text2); line-height: 1.5; }
+
+/* ── KILL CHAIN ── */
+.kc-flow {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+
+.kc-step {
+  display: grid;
+  grid-template-columns: 28px 150px 1fr;
+  gap: 0;
+  border-bottom: 1px solid var(--border);
+  align-items: stretch;
+}
+
+.kc-step:last-child { border-bottom: none; }
+
+.kc-num {
+  background: var(--green4);
+  color: var(--green);
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-right: 1px solid var(--border);
+}
+
+.kc-name {
+  padding: 10px 14px;
+  font-family: var(--display);
+  font-size: 12px;
+  font-weight: 700;
+  color: #c0e8d0;
+  letter-spacing: 0.05em;
+  border-right: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  background: var(--bg3);
+}
+
+.kc-desc { padding: 10px 14px; font-size: 11px; color: var(--text2); display: flex; align-items: center; }
+
+/* ── TROUBLE TABLE ── */
+.trouble { border: 1px solid var(--border); border-radius: 4px; overflow: hidden; margin-bottom: 16px; }
+
+.trouble-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  border-bottom: 1px solid var(--border);
+}
+
+.trouble-row:last-child { border-bottom: none; }
+.trouble-row.head { background: var(--bg3); }
+
+.trouble-cell { padding: 12px 14px; font-size: 12px; }
+.trouble-cell.head-cell {
+  font-family: var(--display);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--green);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.trouble-cell.prob { color: var(--red); }
+.trouble-cell.cause { color: var(--amber); }
+.trouble-cell.sol { color: var(--text2); }
+
+@media (max-width: 640px) {
+  .trouble-row { grid-template-columns: 1fr; }
+  .trouble-cell:not(:last-child) { border-bottom: 1px solid var(--border); }
+}
+
+/* ── OWASP GRID ── */
+.owasp-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.owasp-item {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 14px 16px;
+  display: grid;
+  grid-template-columns: 60px 1fr;
+  gap: 12px;
+  align-items: start;
+}
+
+.owasp-code {
+  font-family: var(--display);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--red);
+  letter-spacing: 0.05em;
+  line-height: 1.3;
+}
+
+.owasp-name { font-size: 12.5px; color: #c0e8d0; font-weight: 500; margin-bottom: 4px; }
+.owasp-fix { font-size: 11px; color: var(--text2); }
+
+/* ── FOOTER ── */
+footer {
+  background: var(--bg2);
+  border-top: 1px solid var(--border);
+  padding: 40px;
+  text-align: center;
+}
+
+.footer-logo {
+  font-family: var(--display);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--green);
+  letter-spacing: 0.1em;
+  margin-bottom: 8px;
+}
+
+.footer-sub { font-size: 11px; color: var(--muted); letter-spacing: 0.1em; }
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg2); }
+::-webkit-scrollbar-thumb { background: var(--green3); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-status">
+    <span class="blink"></span>
+    SISTEMA ATIVO · NÍVEL INTERMEDIÁRIO · NOTEBOOKLM SESSION
+  </div>
+  <h1><span class="accent">CIBER</span><br>SEGURANÇA</h1>
+  <div class="hero-sub-title">Segurança da Informação &amp; InfoSec</div>
+  <div class="hero-meta">
+    <span class="meta-tag highlight">DIO · Caderno Temático</span>
+    <span class="meta-tag">NotebookLM</span>
+    <span class="meta-tag">OWASP · NIST · MITRE ATT&CK</span>
+    <span class="meta-tag">Nível Intermediário</span>
+    <span class="meta-tag">Março 2026</span>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav>
+  <a href="#objetivos" class="active">Objetivos</a>
+  <a href="#fontes">Fontes</a>
+  <a href="#prompts">Prompts</a>
+  <a href="#cia">Tríade CIA</a>
+  <a href="#frameworks">Frameworks</a>
+  <a href="#glossario">Glossário</a>
+  <a href="#reutilizaveis">Prompts Reutilizáveis</a>
+</nav>
+
+<div class="container">
+
+  <!-- OBJETIVOS -->
+  <section id="objetivos">
+    <div class="section-head">
+      <span class="section-num">// 01 · CONTEXTO</span>
+      <div class="section-line"></div>
+    </div>
+    <h2>Contexto &amp; Objetivos</h2>
+    <p class="section-desc">Em um mundo onde dados valem mais do que petróleo, a cibersegurança deixou de ser exclusividade de especialistas. Este caderno foca no nível intermediário — com base em redes e sistemas — avançando para modelagem de ameaças, criptografia aplicada e frameworks de defesa.</p>
+
+    <div class="card-grid">
+      <div class="card green">
+        <div class="card-label">Objetivos de Estudo</div>
+        <ul>
+          <li>Criptografia simétrica, assimétrica e hashing</li>
+          <li>Kill Chain &amp; MITRE ATT&CK</li>
+          <li>Modelagem de ameaças com STRIDE</li>
+          <li>OWASP Top 10 (2021)</li>
+          <li>NIST Cybersecurity Framework 2.0</li>
+          <li>Ferramentas de red/blue team</li>
+        </ul>
+      </div>
+      <div class="card cyan">
+        <div class="card-label">Ferramentas do Blue Team</div>
+        <ul>
+          <li>Splunk / ELK Stack (SIEM)</li>
+          <li>Snort / Suricata (IDS/IPS)</li>
+          <li>Wireshark (análise de tráfego)</li>
+          <li>OpenVAS / Nessus (scanner)</li>
+          <li>ClamAV, EDR solutions</li>
+        </ul>
+      </div>
+      <div class="card red">
+        <div class="card-label">Ferramentas do Red Team</div>
+        <ul>
+          <li>Kali Linux (distribuição pentest)</li>
+          <li>Metasploit Framework</li>
+          <li>Burp Suite (AppSec)</li>
+          <li>Nmap (reconhecimento)</li>
+          <li>Hashcat / John the Ripper</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>#</th><th>Objetivo</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>01</td><td>Criptografia simétrica, assimétrica e hashing</td><td style="color:var(--green)">✓ CONCLUÍDO</td></tr>
+          <tr><td>02</td><td>Ciclo de vida de um ataque (Kill Chain + MITRE ATT&CK)</td><td style="color:var(--green)">✓ CONCLUÍDO</td></tr>
+          <tr><td>03</td><td>Modelagem de ameaças com STRIDE</td><td style="color:var(--green)">✓ CONCLUÍDO</td></tr>
+          <tr><td>04</td><td>OWASP Top 10 (2021)</td><td style="color:var(--green)">✓ CONCLUÍDO</td></tr>
+          <tr><td>05</td><td>Glossário técnico consolidado</td><td style="color:var(--green)">✓ CONCLUÍDO</td></tr>
+          <tr><td>06</td><td>Mapeamento de ferramentas ofensivas e defensivas</td><td style="color:var(--amber)">⟳ EM PROGRESSO</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- FONTES -->
+  <section id="fontes">
+    <div class="section-head">
+      <span class="section-num">// 02 · CURADORIA DE FONTES</span>
+      <div class="section-line"></div>
+    </div>
+    <h2>Fontes Selecionadas</h2>
+    <p class="section-desc">5 fontes abertas de alta qualidade inseridas no NotebookLM para análise cruzada.</p>
+
+    <div class="terminal">
+      <div class="terminal-bar">
+        <span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span>
+        <span class="terminal-title">notebooklm — sources.log</span>
+      </div>
+      <div class="terminal-body"><span class="prompt">$</span> <span class="cmd">list-sources --verbose</span>
+
+<span class="ok">[LOADED]</span> <span style="color:#fff">SOURCE_01</span> · OWASP Top 10 (2021)
+         <span class="out">→ owasp.org/www-project-top-ten/</span>
+         <span class="out">→ Tipo: Documentação Web / PDF</span>
+         <span class="out">→ Foco: 10 categorias de risco em aplicações web, vetores e contramedidas</span>
+
+<span class="ok">[LOADED]</span> <span style="color:#fff">SOURCE_02</span> · NIST Cybersecurity Framework 2.0
+         <span class="out">→ nvlpubs.nist.gov/nistpubs/CSWP/NIST.CSWP.29.pdf</span>
+         <span class="out">→ Tipo: PDF Oficial</span>
+         <span class="out">→ Foco: Gestão de riscos — 6 funções (Govern, Identify, Protect, Detect, Respond, Recover)</span>
+
+<span class="ok">[LOADED]</span> <span style="color:#fff">SOURCE_03</span> · Web Application Hacker's Handbook (caps. 1,2,3,7)
+         <span class="out">→ archive.org/details/TheWebApplicationHackersHandbook</span>
+         <span class="out">→ Tipo: PDF parcial</span>
+         <span class="out">→ Foco: Perspectiva ofensiva — como atacantes exploram aplicações web</span>
+
+<span class="ok">[LOADED]</span> <span style="color:#fff">SOURCE_04</span> · Computer Security: Art and Science — Bishop (caps. 1,4,9,13)
+         <span class="out">→ cs.ucdavis.edu/~bishop/secbook/</span>
+         <span class="out">→ Tipo: PDF parcial</span>
+         <span class="out">→ Foco: Base teórica — criptografia, controle de acesso, políticas de segurança</span>
+
+<span class="ok">[LOADED]</span> <span style="color:#fff">SOURCE_05</span> · MITRE ATT&CK Framework Enterprise
+         <span class="out">→ attack.mitre.org/</span>
+         <span class="out">→ Tipo: Documentação Web + PDF exportado</span>
+         <span class="out">→ Foco: TTPs de atacantes reais — táticas, técnicas e procedimentos</span>
+
+<span class="prompt">$</span> <span class="cmd">sources --count</span>
+<span class="ok">5 fontes carregadas com sucesso. Pronto para consulta cruzada.</span></div>
+    </div>
+  </section>
+
+  <!-- PROMPTS & CICATRIZES -->
+  <section id="prompts">
+    <div class="section-head">
+      <span class="section-num">// 03 · ENGENHARIA DE PROMPTS</span>
+      <div class="section-line"></div>
+    </div>
+    <h2>Prompts &amp; "Cicatrizes"</h2>
+    <p class="section-desc">Documentação do processo de refinamento — incluindo o que funcionou, o que falhou e os aprendizados de cada iteração.</p>
+
+    <!-- SESSÃO 1 -->
+    <div style="margin-bottom:12px;font-family:var(--display);font-size:13px;font-weight:700;color:var(--cyan);letter-spacing:0.1em;text-transform:uppercase;">
+      Sessão 1 — Criptografia Aplicada
+    </div>
+    <div class="prompt-pair">
+      <div class="prompt-version"><span class="badge badge-fail">v1 · FALHOU</span></div>
+      <div class="prompt-code fail">Me explique criptografia.</div>
+      <div class="prompt-result">✗ Resposta genérica. O NotebookLM apresentou resumo básico sem referenciar os documentos carregados nem abordar aspectos práticos. Nenhuma das fontes foi aproveitada.</div>
+    </div>
+    <div class="prompt-pair">
+      <div class="prompt-version"><span class="badge badge-ok">v2 · APROVADO</span></div>
+      <div class="prompt-code ok">Com base nos documentos carregados (especialmente Bishop e NIST CSF),
+explique a diferença entre criptografia simétrica (AES) e assimétrica (RSA/ECC)
+em termos de: (1) funcionamento matemático simplificado, (2) casos de uso ideais,
+(3) vulnerabilidades conhecidas e (4) como o TLS combina os dois modelos na prática.</div>
+      <div class="prompt-result">✓ Resposta estruturada em 4 partes com referências diretas ao Bishop e ao NIST CSF. Incluiu handshake TLS passo a passo e vulnerabilidades reais de cada abordagem.</div>
+      <div class="learning">Especificar quais fontes usar + estrutura de resposta + nível técnico transforma resposta genérica em conteúdo realmente utilizável.</div>
+    </div>
+
+    <!-- SESSÃO 2 -->
+    <div style="margin-bottom:12px;font-family:var(--display);font-size:13px;font-weight:700;color:var(--cyan);letter-spacing:0.1em;text-transform:uppercase;">
+      Sessão 2 — OWASP Top 10
+    </div>
+    <div class="prompt-pair">
+      <div class="prompt-version"><span class="badge badge-fail">v1 · FALHOU</span></div>
+      <div class="prompt-code fail">Quais são as vulnerabilidades mais comuns em aplicações web?</div>
+      <div class="prompt-result">✗ Listou vulnerabilidades genéricas sem usar a estrutura do OWASP Top 10 que estava nos documentos carregados. Desperdiçou a fonte principal.</div>
+    </div>
+    <div class="prompt-pair">
+      <div class="prompt-version"><span class="badge badge-ok">v2 · APROVADO</span></div>
+      <div class="prompt-code ok">Com base no documento OWASP Top 10 (2021) carregado, para cada uma das
+10 categorias de risco forneça: (1) nome e código da categoria,
+(2) descrição técnica do risco em 2 frases, (3) exemplo concreto de vetor
+de ataque, (4) contramedida principal recomendada. Formate como tabela.</div>
+      <div class="prompt-result">✓ Tabela completa das 10 categorias com código (A01:2021...), vetores e contramedidas diretamente referenciadas no documento OWASP.</div>
+      <div class="learning">Para documentos com estrutura própria, referenciar essa estrutura no prompt faz o NotebookLM seguir o "template" do documento — não inventar o seu próprio.</div>
+    </div>
+
+    <!-- SESSÃO 3 -->
+    <div style="margin-bottom:12px;font-family:var(--display);font-size:13px;font-weight:700;color:var(--cyan);letter-spacing:0.1em;text-transform:uppercase;">
+      Sessão 3 — MITRE ATT&CK
+    </div>
+    <div class="prompt-pair">
+      <div class="prompt-version"><span class="badge badge-fail">v1 · FALHOU</span></div>
+      <div class="prompt-code fail">O que é o MITRE ATT&CK?</div>
+      <div class="prompt-result">✗ Definição superficial em um parágrafo. Não aproveitou a riqueza do framework exportado como fonte.</div>
+    </div>
+    <div class="prompt-pair">
+      <div class="prompt-version"><span class="badge badge-ok">v2 · APROVADO</span></div>
+      <div class="prompt-code ok">Com base no documento MITRE ATT&CK carregado, trace o caminho completo
+de um ataque de ransomware usando as táticas Enterprise, desde o acesso
+inicial até o impacto. Para cada tática, cite ao menos uma técnica (com ID)
+e como um blue team poderia detectá-la.</div>
+      <div class="prompt-result">✓ Narrativa end-to-end de TA0001 (Initial Access) até TA0040 (Impact), com técnicas como T1566.001 e recomendações de detecção via SIEM/EDR.</div>
+      <div class="learning">Pedir uma narrativa orientada a caso de uso real (ex: "trace o caminho de um ransomware") gera muito mais aprendizado do que "explique o framework".</div>
+    </div>
+
+    <!-- TROUBLESHOOTING -->
+    <div style="margin:32px 0 12px;font-family:var(--display);font-size:13px;font-weight:700;color:var(--red);letter-spacing:0.1em;text-transform:uppercase;">
+      Troubleshooting — Principais Dificuldades
+    </div>
+
+    <div class="trouble">
+      <div class="trouble-row head">
+        <div class="trouble-cell head-cell">Problema</div>
+        <div class="trouble-cell head-cell">Causa</div>
+        <div class="trouble-cell head-cell">Solução</div>
+      </div>
+      <div class="trouble-row">
+        <div class="trouble-cell prob">Respostas sem citar documentos carregados</div>
+        <div class="trouble-cell cause">Prompt sem direcionamento de fonte</div>
+        <div class="trouble-cell sol">Adicionar "com base no documento X carregado" explicitamente</div>
+      </div>
+      <div class="trouble-row">
+        <div class="trouble-cell prob">Confusão entre autenticação vs. autorização</div>
+        <div class="trouble-cell cause">Falta de diferenciação no prompt</div>
+        <div class="trouble-cell sol">Usar "compare e contraste X vs Y com critérios explícitos"</div>
+      </div>
+      <div class="trouble-row">
+        <div class="trouble-cell prob">Alucinação em CVEs específicos</div>
+        <div class="trouble-cell cause">Dados dinâmicos fora das fontes carregadas</div>
+        <div class="trouble-cell sol">Adicionar "cite apenas CVEs mencionados nos documentos"</div>
+      </div>
+      <div class="trouble-row">
+        <div class="trouble-cell prob">Respostas longas e sem foco prático</div>
+        <div class="trouble-cell cause">Perguntas abertas demais</div>
+        <div class="trouble-cell sol">Limitar com "em no máximo 3 parágrafos" ou "formate como tabela"</div>
+      </div>
+      <div class="trouble-row">
+        <div class="trouble-cell prob">PDF do NIST pouco aproveitado</div>
+        <div class="trouble-cell cause">Arquivo grande — NotebookLM priorizou início</div>
+        <div class="trouble-cell sol">Referenciar seções específicas: "na seção Protect do NIST CSF..."</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TRÍADE CIA -->
+  <section id="cia">
+    <div class="section-head">
+      <span class="section-num">// 04 · MINIGUIA · PARTE 1</span>
+      <div class="section-line"></div>
+    </div>
+    <h2>A Tríade CIA</h2>
+    <p class="section-desc">Os três pilares fundamentais da Segurança da Informação — a base sobre a qual todos os controles, frameworks e práticas são construídos.</p>
+
+    <div class="pillars">
+      <div class="pillar c">
+        <div class="pillar-letter">C</div>
+        <div class="pillar-name">Confidencialidade</div>
+        <div class="pillar-def">Acesso apenas por quem tem autorização formal. Dados visíveis somente para os destinatários corretos.</div>
+        <div class="pillar-threats">⚠ Interceptação · Credential theft · Eavesdropping</div>
+        <div class="pillar-controls">🛡 Criptografia · MFA · Controle de acesso</div>
+      </div>
+      <div class="pillar i">
+        <div class="pillar-letter">I</div>
+        <div class="pillar-name">Integridade</div>
+        <div class="pillar-def">Dados não alterados de forma não autorizada durante armazenamento, transmissão ou processamento.</div>
+        <div class="pillar-threats">⚠ Tampering · SQL Injection · MITM</div>
+        <div class="pillar-controls">🛡 SHA-256 · Assinaturas digitais · Checksums</div>
+      </div>
+      <div class="pillar a">
+        <div class="pillar-letter">A</div>
+        <div class="pillar-name">Disponibilidade</div>
+        <div class="pillar-def">Sistemas e dados acessíveis quando necessários. Falhas não podem ser aproveitadas como vetor de negação de serviço.</div>
+        <div class="pillar-threats">⚠ DDoS · Ransomware · Falhas de hardware</div>
+        <div class="pillar-controls">🛡 Redundância · Backups · Rate limiting</div>
+      </div>
+    </div>
+
+    <!-- CRIPTOGRAFIA -->
+    <div style="margin-top:40px;margin-bottom:16px;font-family:var(--display);font-size:16px;font-weight:700;color:#e0f0e8;letter-spacing:0.05em;">Criptografia Aplicada</div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Tipo</th><th>Exemplo</th><th>Chaves</th><th>Velocidade</th><th>Caso de Uso Ideal</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>Simétrica</td>
+            <td><code>AES-256</code></td>
+            <td>1 chave (cifrar/decifrar)</td>
+            <td style="color:var(--green)">Rápida</td>
+            <td>Disco, VPNs, bancos de dados, armazenamento em repouso</td>
+          </tr>
+          <tr>
+            <td>Assimétrica</td>
+            <td><code>RSA-4096</code>, <code>ECC</code></td>
+            <td>Par pública/privada</td>
+            <td style="color:var(--amber)">Lenta</td>
+            <td>TLS, SSH, assinaturas digitais, PKI, troca de chaves</td>
+          </tr>
+          <tr>
+            <td>Hashing</td>
+            <td><code>SHA-256</code>, <code>bcrypt</code></td>
+            <td>Sem chave (mão única)</td>
+            <td style="color:var(--green)">Muito rápida</td>
+            <td>Senhas, integridade de arquivos, assinaturas digitais</td>
+          </tr>
+          <tr>
+            <td>TLS (híbrido)</td>
+            <td><code>TLS 1.3</code></td>
+            <td>Handshake assimétrico + sessão simétrica</td>
+            <td style="color:var(--green)">Otimizada</td>
+            <td>HTTPS, comunicação segura em rede — o melhor dos dois mundos</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- FRAMEWORKS -->
+  <section id="frameworks">
+    <div class="section-head">
+      <span class="section-num">// 05 · MINIGUIA · PARTE 2</span>
+      <div class="section-line"></div>
+    </div>
+    <h2>Frameworks de Segurança</h2>
+
+    <!-- KILL CHAIN -->
+    <div style="margin-bottom:16px;font-family:var(--display);font-size:16px;font-weight:700;color:#e0f0e8;letter-spacing:0.05em;">Cyber Kill Chain + MITRE ATT&CK</div>
+    <div class="kc-flow">
+      <div class="kc-step">
+        <div class="kc-num">1</div>
+        <div class="kc-name">Reconnaissance</div>
+        <div class="kc-desc">TA0043 · T1595 Active Scanning, T1589 Gather Victim Identity</div>
+      </div>
+      <div class="kc-step">
+        <div class="kc-num">2</div>
+        <div class="kc-name">Initial Access</div>
+        <div class="kc-desc">TA0001 · T1566 Phishing, T1190 Exploit Public-Facing App</div>
+      </div>
+      <div class="kc-step">
+        <div class="kc-num">3</div>
+        <div class="kc-name">Execution</div>
+        <div class="kc-desc">TA0002 · T1059 Scripting Interpreter, T1204 User Execution</div>
+      </div>
+      <div class="kc-step">
+        <div class="kc-num">4</div>
+        <div class="kc-name">Persistence</div>
+        <div class="kc-desc">TA0003 · T1053 Scheduled Task, T1136 Create Account</div>
+      </div>
+      <div class="kc-step">
+        <div class="kc-num">5</div>
+        <div class="kc-name">Priv. Escalation</div>
+        <div class="kc-desc">TA0004 · T1068 Exploit for PrivEsc, T1548 Abuse Elevation Control</div>
+      </div>
+      <div class="kc-step">
+        <div class="kc-num">6</div>
+        <div class="kc-name">Lateral Movement</div>
+        <div class="kc-desc">TA0008 · T1021 Remote Services, T1550 Alt Auth Material</div>
+      </div>
+      <div class="kc-step">
+        <div class="kc-num">7</div>
+        <div class="kc-name">Impact</div>
+        <div class="kc-desc">TA0040 · T1486 Data Encrypted for Impact (Ransomware), T1498 DoS</div>
+      </div>
+    </div>
+
+    <!-- OWASP -->
+    <div style="margin:40px 0 16px;font-family:var(--display);font-size:16px;font-weight:700;color:#e0f0e8;letter-spacing:0.05em;">OWASP Top 10 (2021)</div>
+    <div class="owasp-grid">
+      <div class="owasp-item">
+        <div class="owasp-code">A01<br>2021</div>
+        <div>
+          <div class="owasp-name">Broken Access Control</div>
+          <div class="owasp-fix">→ Deny by default · Validação server-side</div>
+        </div>
+      </div>
+      <div class="owasp-item">
+        <div class="owasp-code">A02<br>2021</div>
+        <div>
+          <div class="owasp-name">Cryptographic Failures</div>
+          <div class="owasp-fix">→ TLS obrigatório · AES-256 · bcrypt para senhas</div>
+        </div>
+      </div>
+      <div class="owasp-item">
+        <div class="owasp-code">A03<br>2021</div>
+        <div>
+          <div class="owasp-name">Injection</div>
+          <div class="owasp-fix">→ Prepared statements · ORMs · Input validation</div>
+        </div>
+      </div>
+      <div class="owasp-item">
+        <div class="owasp-code">A04<br>2021</div>
+        <div>
+          <div class="owasp-name">Insecure Design</div>
+          <div class="owasp-fix">→ Threat modeling · Secure design patterns</div>
+        </div>
+      </div>
+      <div class="owasp-item">
+        <div class="owasp-code">A05<br>2021</div>
+        <div>
+          <div class="owasp-name">Security Misconfiguration</div>
+          <div class="owasp-fix">→ Hardening · CIS Benchmarks · IaC seguro</div>
+        </div>
+      </div>
+      <div class="owasp-item">
+        <div class="owasp-code">A06<br>2021</div>
+        <div>
+          <div class="owasp-name">Vulnerable Components</div>
+          <div class="owasp-fix">→ SCA tools · Patch management automatizado</div>
+        </div>
+      </div>
+      <div class="owasp-item">
+        <div class="owasp-code">A07<br>2021</div>
+        <div>
+          <div class="owasp-name">Auth Failures</div>
+          <div class="owasp-fix">→ MFA · Session management seguro</div>
+        </div>
+      </div>
+      <div class="owasp-item">
+        <div class="owasp-code">A08<br>2021</div>
+        <div>
+          <div class="owasp-name">Software Integrity Failures</div>
+          <div class="owasp-fix">→ Assinaturas digitais · SBOM · SLSA</div>
+        </div>
+      </div>
+      <div class="owasp-item">
+        <div class="owasp-code">A09<br>2021</div>
+        <div>
+          <div class="owasp-name">Logging Failures</div>
+          <div class="owasp-fix">→ SIEM · Alertas em tempo real · Retenção de logs</div>
+        </div>
+      </div>
+      <div class="owasp-item">
+        <div class="owasp-code">A10<br>2021</div>
+        <div>
+          <div class="owasp-name">SSRF</div>
+          <div class="owasp-fix">→ Allowlist de URLs · Desabilitar redirecionamentos</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- NIST CSF -->
+    <div style="margin:40px 0 16px;font-family:var(--display);font-size:16px;font-weight:700;color:#e0f0e8;letter-spacing:0.05em;">NIST CSF 2.0 — As 6 Funções</div>
+    <div class="nist-flow">
+      <div class="nist-block">
+        <div class="nist-fn" style="color:var(--amber)">GOVERN</div>
+        <div class="nist-desc">Estratégia, políticas, papéis e responsabilidades</div>
+      </div>
+      <div class="nist-block">
+        <div class="nist-fn">IDENTIFY</div>
+        <div class="nist-desc">Inventário de ativos e avaliação de riscos</div>
+      </div>
+      <div class="nist-block">
+        <div class="nist-fn">PROTECT</div>
+        <div class="nist-desc">Controles de acesso, criptografia, treinamento</div>
+      </div>
+      <div class="nist-block">
+        <div class="nist-fn" style="color:var(--cyan)">DETECT</div>
+        <div class="nist-desc">Monitoramento contínuo e detecção de anomalias</div>
+      </div>
+      <div class="nist-block">
+        <div class="nist-fn" style="color:var(--red)">RESPOND</div>
+        <div class="nist-desc">Planos de resposta a incidentes e contenção</div>
+      </div>
+      <div class="nist-block">
+        <div class="nist-fn">RECOVER</div>
+        <div class="nist-desc">Restauração, lições aprendidas e melhoria contínua</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- GLOSSÁRIO -->
+  <section id="glossario">
+    <div class="section-head">
+      <span class="section-num">// 06 · MINIGUIA · PARTE 3 · GLOSSÁRIO</span>
+      <div class="section-line"></div>
+    </div>
+    <h2>Glossário Técnico</h2>
+    <p class="section-desc">20 termos identificados pelo NotebookLM como os mais recorrentes nas 5 fontes carregadas.</p>
+
+    <div class="terminal" style="margin-bottom:24px;">
+      <div class="terminal-bar">
+        <span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span>
+        <span class="terminal-title">glossary.db — 20 entries</span>
+      </div>
+      <div class="terminal-body"><span class="prompt">$</span> <span class="cmd">query glossary --all --format=table</span></div>
+    </div>
+
+    <div style="border:1px solid var(--border);border-radius:4px;padding:0 24px;">
+      <div class="glos-item">
+        <div class="glos-term">APT</div>
+        <div>
+          <div class="glos-def">Advanced Persistent Threat — ator sofisticado (geralmente estado-nação) com presença prolongada em redes-alvo sem ser detectado.</div>
+          <div class="glos-src">→ MITRE ATT&CK</div>
+        </div>
+      </div>
+      <div class="glos-item">
+        <div class="glos-term">Attack Surface</div>
+        <div>
+          <div class="glos-def">Conjunto de pontos de entrada (portas, APIs, endpoints, usuários) que podem ser explorados por um atacante.</div>
+          <div class="glos-src">→ Bishop — Computer Security</div>
+        </div>
+      </div>
+      <div class="glos-item">
+        <div class="glos-term">Blue Team</div>
+        <div>
+          <div class="glos-def">Time responsável pela defesa ativa de sistemas — monitoramento contínuo, detecção de ameaças e resposta a incidentes.</div>
+          <div class="glos-src">→ NIST CSF</div>
+        </div>
+      </div>
+      <div class="glos-item">
+        <div class="glos-term">CVSS</div>
+        <div>
+          <div class="glos-def">Common Vulnerability Scoring System — sistema padronizado de pontuação de severidade de vulnerabilidades em escala 0.0 a 10.0.</div>
+          <div class="glos-src">→ OWASP</div>
+        </div>
+      </div>
+      <div class="glos-item">
+        <div class="glos-term">Defense in Depth</div>
+        <div>
+          <div class="glos-def">Estratégia de múltiplas camadas de controles de segurança — se uma camada falha, as demais compensam e limitam o dano.</div>
+          <div class="glos-src">→ Bishop + NIST CSF</div>
+        </div>
+      </div>
+      <div class="glos-item">
+        <div class="glos-term">Exploit</div>
+        <div>
+          <div class="glos-def">Código, script ou técnica que aproveita uma vulnerabilidade específica para executar ações não autorizadas em um sistema.</div>
+          <div class="glos-src">→ MITRE ATT&CK</div>
+        </div>
+      </div>
+      <div class="glos-item">
+        <div class="glos-term">Hardening</div>
+        <div>
+          <div class="glos-def">Processo de reduzir a superfície de ataque removendo serviços desnecessários, fechando portas e aplicando configurações seguras.</div>
+          <div class="glos-src">→ NIST CSF</div>
+        </div>
+      </div>
+      <div class="glos-item">
+        <div class="glos-term">IOC</div>
+        <div>
+          <div class="glos-def">Indicator of Compromise — artefato forense (hash, IP malicioso, domínio, string) que indica que um sistema foi comprometido.</div>
+          <div class="glos-src">→ MITRE ATT&CK</div>
+        </div>
+      </div>
+      <div class="glos-item">
+        <div class="glos-term">Least Privilege</div>
+        <div>
+          <div class="glos-def">Princípio de conceder apenas as permissões mínimas necessárias para cada usuário ou processo executar sua função específica.</div>
+          <div class="glos-src">→ Bishop — Computer Security</div>
+        </div>
+      </div>
+      <div class="glos-item">
+        <div class="glos-term">MITM</div>
+        <div>
+          <div class="glos-def">Man-in-the-Middle Attack — atacante se posiciona entre duas partes comunicantes para interceptar, modificar ou injetar dados.</div>
+          <div class="glos-src">→ Stuttard & Pinto</div>
+        </div>
+      </div>
+      <div class="glos-item">
+        <div class="glos-term">Payload</div>
+        <div>
+          <div class="glos-def">Parte do código malicioso que executa a ação danosa (exfiltração, cifragem, destruição), diferente do vetor de entrega.</div>
+          <div class="glos-src">→ MITRE ATT&CK</div>
+        </div>
+      </div>
+      <div class="glos-item">
+        <div class="glos-term">Pentesting</div>
+        <div>
+          <div class="glos-def">Teste de penetração — simulação controlada e autorizada de ataques para identificar vulnerabilidades antes que atacantes reais o façam.</div>
+          <div class="glos-src">→ Stuttard & Pinto</div>
+        </div>
+      </div>
+      <div class="glos-item">
+        <div class="glos-term">Red Team</div>
+        <div>
+          <div class="glos-def">Time que simula adversários reais de forma persistente para testar a eficácia dos controles e da detecção de uma organização.</div>
+          <div class="glos-src">→ MITRE ATT&CK</div>
+        </div>
+      </div>
+      <div class="glos-item">
+        <div class="glos-term">SIEM</div>
+        <div>
+          <div class="glos-def">Security Information and Event Management — plataforma que centraliza, correlaciona e analisa logs de múltiplas fontes em tempo real.</div>
+          <div class="glos-src">→ NIST CSF</div>
+        </div>
+      </div>
+      <div class="glos-item">
+        <div class="glos-term">Threat Modeling</div>
+        <div>
+          <div class="glos-def">Processo estruturado de identificar ameaças, vulnerabilidades e contramedidas durante o design de um sistema, antes da implementação.</div>
+          <div class="glos-src">→ Bishop — Computer Security</div>
+        </div>
+      </div>
+      <div class="glos-item">
+        <div class="glos-term">TTP</div>
+        <div>
+          <div class="glos-def">Tactics, Techniques, and Procedures — descrição detalhada do comportamento observado em atacantes, catalogado no MITRE ATT&CK.</div>
+          <div class="glos-src">→ MITRE ATT&CK</div>
+        </div>
+      </div>
+      <div class="glos-item">
+        <div class="glos-term">XSS</div>
+        <div>
+          <div class="glos-def">Cross-Site Scripting — injeção de scripts maliciosos em páginas web que são executados no navegador de outros usuários.</div>
+          <div class="glos-src">→ OWASP A03</div>
+        </div>
+      </div>
+      <div class="glos-item">
+        <div class="glos-term">CSRF</div>
+        <div>
+          <div class="glos-def">Cross-Site Request Forgery — força o navegador de uma vítima autenticada a executar ações não intencionadas em um site confiável.</div>
+          <div class="glos-src">→ OWASP</div>
+        </div>
+      </div>
+      <div class="glos-item">
+        <div class="glos-term">Pivoting</div>
+        <div>
+          <div class="glos-def">Usar um sistema já comprometido como trampolim para atacar outros sistemas na rede interna, expandindo o acesso lateral.</div>
+          <div class="glos-src">→ MITRE ATT&CK</div>
+        </div>
+      </div>
+      <div class="glos-item">
+        <div class="glos-term">Zero-Day</div>
+        <div>
+          <div class="glos-def">Vulnerabilidade desconhecida pelo fabricante do software, para a qual ainda não existe patch disponível — altamente valorizada por atacantes.</div>
+          <div class="glos-src">→ OWASP + MITRE</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROMPTS REUTILIZÁVEIS -->
+  <section id="reutilizaveis">
+    <div class="section-head">
+      <span class="section-num">// 07 · MINIGUIA · PARTE 4 · PROMPTS REUTILIZÁVEIS</span>
+      <div class="section-line"></div>
+    </div>
+    <h2>Prompts Reutilizáveis</h2>
+    <p class="section-desc">6 prompts testados e validados para apoiar futuras sessões de estudo no NotebookLM ou qualquer LLM.</p>
+
+    <div class="reuse">
+      <div class="reuse-head">
+        <span class="reuse-label">// ANÁLISE DE VULNERABILIDADE</span>
+        <button class="copy-btn" onclick="copyText(this)">COPIAR</button>
+      </div>
+      <div class="reuse-body">Com base nos documentos carregados, analise a vulnerabilidade [NOME/CVE/CATEGORIA] nos seguintes aspectos:
+1. Mecanismo técnico de funcionamento
+2. Vetor de ataque típico (passo a passo simplificado)
+3. Sistemas/configurações afetados
+4. Contramedidas preventivas e corretivas
+5. Referência MITRE ATT&CK (tática + técnica ID) se aplicável</div>
+    </div>
+
+    <div class="reuse">
+      <div class="reuse-head">
+        <span class="reuse-label">// MODELAGEM DE AMEAÇAS (STRIDE)</span>
+        <button class="copy-btn" onclick="copyText(this)">COPIAR</button>
+      </div>
+      <div class="reuse-body">Aplique o framework STRIDE para modelar as ameaças de [SISTEMA/COMPONENTE].
+Para cada categoria (Spoofing, Tampering, Repudiation, Information Disclosure,
+Denial of Service, Elevation of Privilege):
+- Descreva a ameaça específica para este contexto
+- Cite um ataque concreto possível
+- Proponha uma contramedida técnica implementável</div>
+    </div>
+
+    <div class="reuse">
+      <div class="reuse-head">
+        <span class="reuse-label">// MAPEAMENTO MITRE ATT&CK</span>
+        <button class="copy-btn" onclick="copyText(this)">COPIAR</button>
+      </div>
+      <div class="reuse-body">Com base no documento MITRE ATT&CK carregado, trace o caminho de um ataque
+de [TIPO: ransomware / APT / insider threat / supply chain].
+Para cada tática utilizada:
+- Identifique a tática (TA####) e nome
+- Cite a técnica mais provável (T#### com nome)
+- Descreva como um blue team poderia detectar essa atividade</div>
+    </div>
+
+    <div class="reuse">
+      <div class="reuse-head">
+        <span class="reuse-label">// REVISÃO DE CONTROLES (NIST CSF)</span>
+        <button class="copy-btn" onclick="copyText(this)">COPIAR</button>
+      </div>
+      <div class="reuse-body">Com base no NIST CSF e nos demais documentos carregados, avalie os controles
+de segurança para [TIPO DE SISTEMA: aplicação web / API REST / cloud].
+Para cada função do NIST (Govern, Identify, Protect, Detect, Respond, Recover):
+- Identifique o controle mais crítico
+- Descreva como implementá-lo
+- Indique o risco mitigado</div>
+    </div>
+
+    <div class="reuse">
+      <div class="reuse-head">
+        <span class="reuse-label">// ANÁLISE DE INCIDENTE</span>
+        <button class="copy-btn" onclick="copyText(this)">COPIAR</button>
+      </div>
+      <div class="reuse-body">Com base nos documentos carregados, analise o seguinte cenário de incidente:
+[DESCREVA O CENÁRIO]
+Responda:
+1. Quais categorias do OWASP Top 10 foram potencialmente exploradas?
+2. Qual sequência de táticas MITRE ATT&CK melhor descreve o ataque?
+3. Quais controles do NIST CSF falharam?
+4. Que ações de resposta e recuperação deveriam ser tomadas?</div>
+    </div>
+
+    <div class="reuse">
+      <div class="reuse-head">
+        <span class="reuse-label">// AUTOAVALIAÇÃO TÉCNICA</span>
+        <button class="copy-btn" onclick="copyText(this)">COPIAR</button>
+      </div>
+      <div class="reuse-body">Com base em todo o material carregado sobre [SUBTÓPICO DE SEGURANÇA],
+crie 8 questões de nível intermediário-avançado:
+- 3 questões conceituais (4 alternativas + gabarito comentado)
+- 3 questões de aplicação prática (cenário + solução esperada)
+- 2 questões "pegadinha" baseadas em erros comuns de profissionais</div>
+    </div>
+  </section>
+
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">[ CIBERSEGURANÇA ]</div>
+  <div class="footer-sub">
+    CADERNO TEMÁTICO · DIO — DIGITAL INNOVATION ONE · NOTEBOOKLM · MARÇO 2026
+  </div>
+</footer>
+
+<script>
+// Smooth scroll + active nav
+document.querySelectorAll('nav a').forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    const target = document.querySelector(a.getAttribute('href'));
+    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+});
+
+const sections = document.querySelectorAll('section[id]');
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      document.querySelectorAll('nav a').forEach(a => {
+        a.classList.toggle('active', a.getAttribute('href') === '#' + e.target.id);
+      });
+    }
+  });
+}, { threshold: 0.25 });
+sections.forEach(s => observer.observe(s));
+
+// Copy prompt text
+function copyText(btn) {
+  const body = btn.closest('.reuse').querySelector('.reuse-body').textContent;
+  navigator.clipboard.writeText(body.trim()).then(() => {
+    const orig = btn.textContent;
+    btn.textContent = 'COPIADO ✓';
+    btn.style.color = 'var(--green)';
+    setTimeout(() => { btn.textContent = orig; btn.style.color = ''; }, 2000);
+  });
+}
+
+// Typing effect on hero status bar
+const el = document.querySelector('.hero-status');
+const originalText = el.innerHTML;
+</script>
+</body>
+</html>
